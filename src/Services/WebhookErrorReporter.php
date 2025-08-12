@@ -29,9 +29,23 @@ class WebhookErrorReporter
     {
         try {
             $payload = $this->buildPayload($exception, $environment, $httpStatus, $breadcrumbs);
-            $this->sendWebhook($payload);
+            return $this->sendWebhook($payload);
         } catch (\Throwable $e) {
             error_log('Failed to report error to Error Explorer: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Send raw data to webhook
+     */
+    public function sendData(array $data): bool
+    {
+        try {
+            return $this->sendWebhook($data);
+        } catch (\Throwable $e) {
+            error_log('Failed to send data to Error Explorer: ' . $e->getMessage());
+            return false;
         }
     }
 

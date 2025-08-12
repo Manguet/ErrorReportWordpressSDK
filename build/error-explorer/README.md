@@ -64,7 +64,7 @@ $errorReporter->register();
 
 1. Log in to your Error Explorer dashboard
 2. Go to your project settings
-3. Copy the webhook URL (format: `https://your-domain.com/webhook/error/your-token`)
+3. Copy the webhook URL (format: `https://error-explorer.com/webhook/error/your-token`)
 
 ### Manual Configuration
 

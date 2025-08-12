@@ -64,7 +64,7 @@ $errorReporter->register();
 
 1. Log in to your Error Explorer dashboard
 2. Go to your project settings
-3. Copy the webhook URL (format: `https://your-domain.com/webhook/error/your-token`)
+3. Copy the webhook URL (format: `https://error-explorer.com/webhook/error/your-token`)
 
 ### Manual Configuration
 
@@ -329,6 +329,59 @@ define('WP_DEBUG_LOG', true);
 ```
 
 Check `/wp-content/debug.log` for SDK-related messages.
+
+### Local Development Issues
+
+#### "Invalid webhook URL provided" Error
+For local development environments using HTTP URLs:
+
+```php
+// In your wp-config.php or plugin configuration
+$errorReporter = new ErrorReporter('http://localhost/webhook/error/token', [
+    'environment' => 'development',
+    'require_https' => false,  // Allow HTTP for local testing
+    // ... other options
+]);
+```
+
+The SDK automatically detects WordPress environment type and allows HTTP in non-production environments.
+
+#### Advanced Features Compatibility
+If you encounter issues with advanced features (batching, offline queue, etc.), you can disable them:
+
+```php
+// In error-explorer.php plugin main file
+$this->error_reporter = new ErrorReporter($webhook_url, [
+    'environment' => wp_get_environment_type(),
+    // ... other basic options
+    
+    // Disable advanced features for compatibility
+    'batch_enabled' => false,
+    'offline_enabled' => false,
+    'circuit_breaker_enabled' => false,
+    'compression_enabled' => false,
+    'rate_limiting_enabled' => false
+]);
+```
+
+#### Testing Error Capture
+Create a simple test file to verify error capture:
+
+```php
+// wp-test-errors.php
+<?php
+require_once __DIR__ . '/wp-load.php';
+
+// Test exception
+if (isset($_GET['test'])) {
+    throw new Exception('Test error from WordPress - ' . date('Y-m-d H:i:s'));
+}
+
+echo '<a href="?test=1">Test Error Capture</a>';
+?>
+```
+
+Visit `http://yoursite.local/wp-test-errors.php?test=1` to trigger a test error.
 
 ## Requirements
 
